@@ -36,17 +36,17 @@ if feature == "The 'What' Changed Feature":
                     selected_files = []
                     for file in all_changes:
                         if st.checkbox(file, key=file):
-                            selected_files.append(file, key=file)
-                        if st.button("Stage Selected Files"):
-                            repo.index.add(selected_files)
-                            st.rerun()
+                            selected_files.append(file)
+                    if st.button("Stage Selected Files"):
+                        repo.index.add(selected_files)
+                        st.rerun()
                 else:
                     st.write("Everything is up to date!")
 
             except git.exc.InvalidGitRepositoryError:
                 st.warning("The repo doesn't exist.")
             except Exception as e:
-                st.error("Unexpected Error" + e)
+                st.error("Unexpected Error" + str(e))
                 
 
         else:

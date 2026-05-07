@@ -1,7 +1,12 @@
 import streamlit as st
 
-st.title("GitPilot")
-
+top, bottom = st.columns(2)
+with top:
+    left, right = st.columns(2)
+    with left:
+        st.title("GitPilot")
+    with right:
+        st.write("Thinking what to write here")
 # I will try to make level 4 project and this should help all the beginners and also me.
 
 st.sidebar.header("Select a feature")

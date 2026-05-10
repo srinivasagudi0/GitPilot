@@ -5,7 +5,7 @@ from support import is_git_initialized as check_git
 from support import summarize_git_status as summarize_status
 
 
-features = ["Start Here", "Vocabulary","Initialize Git", "Status & Stage Files", "Commit Files", "Log & Branch"]
+features = ["Start Here", "Vocabulary","Initialize Git", "Status & Stage Files", "Commit Files", "Log & Branch", "Add Remote & Push"]
 st.sidebar.markdown("# **:blue[GitPilot]**")
 feature = st.sidebar.selectbox(
     "Choose a feature", [feature for feature in features]
@@ -208,3 +208,79 @@ if feature == "Log & Branch":
     st.write("The log shows saved commits.")
     st.write("A branch is a separate place to work on your project.")
 
+if feature == "Add Remote & Push":
+    st.header("Add Remote & Push")
+
+    st.write("A remote is the online version of your project, like a GitHub repo.")
+    st.write("Pushing uploads your commits from your computer to that online repo.")
+    st.write("Here are the commands you'd normally use:")
+    st.code("git remote add origin URL\ngit push -u origin branch_name", language="bash")
+
+    st.info("Let me handle this for you. Pick your project folder and paste your GitHub repo URL.")
+
+    repo_dir = st.text_input("Where's your project?", value=os.getcwd())
+    remote_url = st.text_input("GitHub repo URL")
+
+    if os.path.isdir(repo_dir):
+        if check_git(repo_dir):
+            repo = git.Repo(repo_dir)
+
+            try:
+                current_branch = repo.active_branch.name
+                st.write(f"Current branch: `{current_branch}`")
+            except Exception:
+                current_branch = ""
+                st.warning("Make one commit first before pushing.")
+
+            branches = [branch.name for branch in repo.branches]
+            if branches:
+                default_branch = "main" if "main" in branches else current_branch
+                branch_to_push = st.selectbox(
+                    "Branch to push",
+                    branches,
+                    index=branches.index(default_branch),
+                )
+            else:
+                branch_to_push = ""
+
+            remotes = [remote.name for remote in repo.remotes]
+
+            if remotes:
+                st.write("Current remotes:")
+                st.write(remotes)
+            else:
+                st.warning("No remote added yet.")
+
+            if st.button("Add Remote"):
+                if remote_url:
+                    try:
+                        if "origin" in remotes:
+                            repo.git.remote("set-url", "origin", remote_url)
+                            st.success("Updated origin remote.")
+                        else:
+                            repo.git.remote("add", "origin", remote_url)
+                            st.success("Added origin remote.")
+                    except Exception as e:
+                        st.error(f"Could not add remote: {e}")
+                else:
+                    st.warning("Paste your GitHub repo URL first.")
+
+            if st.button("Push to GitHub"):
+                try:
+                    if branch_to_push:
+                        if current_branch != branch_to_push:
+                            repo.git.checkout(branch_to_push)
+                        repo.git.push("-u", "origin", branch_to_push)
+                        st.success(f"Pushed `{branch_to_push}` to GitHub.")
+                    else:
+                        st.warning("Make one commit first before pushing.")
+                except Exception as e:
+                    st.error(f"Could not push: {e}")
+        else:
+            st.warning("Git is not initialized in this folder.")
+    else:
+        st.error("That path doesn't seem to exist. Can you double-check it?")
+
+    st.subheader("Here's what's happening:")
+    st.write("The remote connects your local project to GitHub.")
+    st.write("Push sends your commits to GitHub so they are online.")

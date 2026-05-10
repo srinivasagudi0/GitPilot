@@ -1,6 +1,7 @@
 import streamlit as st
 import os
 import git
+from support import is_git_initialized as check_git
 
 
 features = ["Start Here", "Initialize Git"]
@@ -32,10 +33,16 @@ if feature == "Initialize Git":
     if st.button("Initialize Git"):
         try:
             if os.path.isdir(repo_dir):
-                git.Repo.init(repo_dir)
-                st.success("Git has been initialized successfully!")
+                if check_git(repo_dir):
+                    st.warning("Git is already initialized in this folder.")
+                else:
+                    git.Repo.init(repo_dir)
+                    st.success("Git has been initialized successfully!")
             else:
                 st.error("The specified path does not exist. Please enter a valid path.")
         except Exception as e:
             st.error(f"An error occurred while initializing Git: {e}")
-    
+    st.subheader("What this does:")
+    st.write("Starts Git tracking in this folder.")
+    st.write("Creates a hidden `.git` directory for version control (lets you track changes to your files, save different versions, and collaborate with others safely).")
+    st.write("After this, you can start using Git commands to manage your project.")

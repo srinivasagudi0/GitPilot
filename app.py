@@ -5,7 +5,7 @@ from support import is_git_initialized as check_git
 from support import summarize_git_status as summarize_status
 
 
-features = ["Start Here", "Vocabulary","Initialize Git", "Status & Stage Files"]
+features = ["Start Here", "Vocabulary","Initialize Git", "Status & Stage Files", "Commit Files"]
 st.sidebar.markdown("# **:blue[GitPilot]**")
 feature = st.sidebar.selectbox(
     "Choose a feature", [feature for feature in features]
@@ -79,10 +79,11 @@ if feature == "Status & Stage Files":
                 if check_git(repo_dir):
                     repo = git.Repo(repo_dir)
                     status = repo.git.status()
-                    with st.spinner("Summarizing changes..."):
-                        summary = summarize_status(status)
                     st.code(status)
-                    st.info(f"Summary: {summary}")
+                    if os.getenv("OPENAI_API_KEY"):
+                        with st.spinner("Summarizing changes..."):
+                            summary = summarize_status(status)
+                        st.info(f"Summary: {summary}")
                 else:
                     st.warning("Looks like Git isn't set up here yet. Want to initialize it first?")
             else:
@@ -99,7 +100,7 @@ if feature == "Status & Stage Files":
             selected_files = st.multiselect("Which files do you want to save?", file_names)
             if st.button("Save These Files"):
                 if selected_files:
-                    repo.git.add(selected_files)
+                    repo.git.add(*selected_files)
                     st.success("All set! Your files are ready to be committed.")
                 else:
                     st.warning("Pick at least one file first.")
@@ -110,3 +111,52 @@ if feature == "Status & Stage Files":
     st.write("You get to see all the files you've modified in your project.")
     st.write("You pick and choose which ones you want to include in your next save.")
     st.write("This is just a prep step—you're not actually saving anything yet, just getting ready.")
+
+if feature == "Commit Files":
+    st.header("Commit Files")
+    st.write("Committing is like taking a snapshot of your project at a specific moment. It saves your changes so you can look back or share them later.")
+    st.write("Here's the command you'd use:")
+    st.code('git commit -m "Your commit message here"', language="bash")
+    
+    st.info("Let's do this together! Just pick your project folder and write a message about what you've changed.")
+
+    repo_dir = st.text_input("Where's your project?", value=os.getcwd())
+    commit_message = st.text_input("What's this change about?", value="My commit message")
+
+    if os.path.isdir(repo_dir) and check_git(repo_dir):
+        repo = git.Repo(repo_dir)
+        staged_files = repo.git.diff("--cached", "--name-only").splitlines()
+
+        if staged_files:
+            st.write("Files ready to commit:")
+            st.write(staged_files)
+        else:
+            st.warning("No files are staged yet. Go to Status & Stage Files first.")
+
+    if st.button("Commit Changes"):
+        try:
+            if os.path.isdir(repo_dir):
+                if check_git(repo_dir):
+                    repo = git.Repo(repo_dir)
+                    staged_files = repo.git.diff("--cached", "--name-only").splitlines()
+
+                    if not commit_message.strip():
+                        st.warning("Write a commit message first.")
+                    elif staged_files:
+                        repo.git.commit("-m", commit_message)
+                        st.success("Great job! Your changes have been committed.")
+                    else:
+                        st.warning("Stage at least one file before committing.")
+                else:
+                    st.warning("Git isn't set up here yet. Do you want to initialize it first?")
+            else:
+                st.error("That path doesn't seem to exist. Can you double-check it?")
+        except Exception as e:
+            st.error(f"Oops, something went wrong: {e}")
+
+    st.subheader("Here's what's happening:")
+    st.write("Git takes the files you staged and saves them as one commit.")
+    st.write("Your commit message should briefly explain what changed.")
+    st.write("After committing, you have a saved checkpoint you can return to later.")
+    
+    st.warning("Remember, committing doesn't upload your changes anywhere yet. It's just saving them on your computer. To share them online, you'll need to push them to a remote repository like GitHub.")

@@ -2,6 +2,7 @@ import streamlit as st
 import os
 import git
 from support import is_git_initialized as check_git
+from support import summarize_git_status as summarize_status
 
 
 features = ["Start Here", "Vocabulary","Initialize Git", "Status & Stage Files"]
@@ -61,49 +62,51 @@ if feature == "Initialize Git":
     st.write("Creates a hidden `.git` directory for version control (lets you track changes to your files, save different versions, and collaborate with others safely).")
     st.write("After this, you can start using Git commands to manage your project.")
 
-    if feature == "Status & Stage Files":
-        st.header("Status & Stage Files")
-        
-        st.write("Before you save your work with Git, it's helpful to check what's changed. Think of it like reviewing your edits before hitting save.")
-        st.write("Here are the commands you'd normally use:")
-        st.code("git status\ngit add file_name", language="bash")
-        
-        st.info("Let me handle this for you. Just pick your project folder and use the tools below.")
+if feature == "Status & Stage Files":
+    st.header("Status & Stage Files")
+    
+    st.write("Before you save your work with Git, it's helpful to check what's changed. Think of it like reviewing your edits before hitting save.")
+    st.write("Here are the commands you'd normally use:")
+    st.code("git status\ngit add file_name", language="bash")
+    
+    st.info("Let me handle this for you. Just pick your project folder and use the tools below.")
 
-        repo_dir = st.text_input("Where's your project?", value=os.getcwd())
+    repo_dir = st.text_input("Where's your project?", value=os.getcwd())
 
-        if st.button("See What Changed"):
-            try:
-                if os.path.isdir(repo_dir):
-                    if check_git(repo_dir):
-                        repo = git.Repo(repo_dir)
-                        status = repo.git.status()
-                        st.code(status)
-                    else:
-                        st.warning("Looks like Git isn't set up here yet. Want to initialize it first?")
+    if st.button("See What Changed"):
+        try:
+            if os.path.isdir(repo_dir):
+                if check_git(repo_dir):
+                    repo = git.Repo(repo_dir)
+                    status = repo.git.status()
+                    with st.spinner("Summarizing changes..."):
+                        summary = summarize_status(status)
+                    st.code(status)
+                    st.info(f"Summary: {summary}")
                 else:
-                    st.error("That path doesn't seem to exist. Can you double-check it?")
-            except Exception as e:
-                st.error(f"Oops, something went wrong: {e}")
-
-        if os.path.isdir(repo_dir) and check_git(repo_dir):
-            repo = git.Repo(repo_dir)
-            changed_files = repo.git.status("--short").splitlines()
-            file_names = [file[3:] for file in changed_files]
-
-            if file_names:
-                selected_files = st.multiselect("Which files do you want to save?", file_names)
-                if st.button("Save These Files"):
-                    if selected_files:
-                        repo.git.add(selected_files)
-                        st.success("All set! Your files are ready to be committed.")
-                    else:
-                        st.warning("Pick at least one file first.")
+                    st.warning("Looks like Git isn't set up here yet. Want to initialize it first?")
             else:
-                st.success("Everything's up to date. Nothing new to save!")
+                st.error("That path doesn't seem to exist. Can you double-check it?")
+        except Exception as e:
+            st.error(f"Oops, something went wrong: {e}")
 
-        st.subheader("Here's what's happening:")
-        st.write("You get to see all the files you've modified in your project.")
-        st.write("You pick and choose which ones you want to include in your next save.")
-        st.write("This is just a prep step—you're not actually saving anything yet, just getting ready.")
+    if os.path.isdir(repo_dir) and check_git(repo_dir):
+        repo = git.Repo(repo_dir)
+        changed_files = repo.git.status("--short").splitlines()
+        file_names = [file[3:] for file in changed_files]
 
+        if file_names:
+            selected_files = st.multiselect("Which files do you want to save?", file_names)
+            if st.button("Save These Files"):
+                if selected_files:
+                    repo.git.add(selected_files)
+                    st.success("All set! Your files are ready to be committed.")
+                else:
+                    st.warning("Pick at least one file first.")
+        else:
+            st.success("Everything's up to date. Nothing new to save!")
+
+    st.subheader("Here's what's happening:")
+    st.write("You get to see all the files you've modified in your project.")
+    st.write("You pick and choose which ones you want to include in your next save.")
+    st.write("This is just a prep step—you're not actually saving anything yet, just getting ready.")

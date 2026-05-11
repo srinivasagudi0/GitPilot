@@ -284,3 +284,31 @@ if feature == "Add Remote & Push":
     st.subheader("Here's what's happening:")
     st.write("The remote connects your local project to GitHub.")
     st.write("Push sends your commits to GitHub so they are online.")
+
+
+
+# now simplest things to do add a last section of teaching with git clone and git pull
+
+if feature == "Clone & Pull":
+    st.header("Clone & Pull")
+    st.write("Cloning is downloading a project from GitHub to your computer. \nPulling is getting the latest changes from GitHub to your computer.")
+
+    st.code('#get the repo on to your computer\ngit clone URL \n#pull the latest changes\ngit pull origin main', language="bash")
+    st.info("Let me handle this for you. Paste the GitHub repo URL and choose where to save it.")
+    remote_url = st.text_input("GitHub repo URL")
+    save_path = st.text_input("Where do you want to save the project?", value=os.getcwd())
+    if st.button("Clone Repository"):
+        try:
+            if remote_url and save_path:
+                if os.path.exists(save_path) and os.listdir(save_path):
+                    st.warning("The save path is not empty. Please choose an empty folder or a new path.")
+                else:
+                    git.Repo.clone_from(remote_url, save_path)
+                    st.success("Repository cloned successfully!")
+            else:
+                st.warning("Please enter both the GitHub repo URL and the save path.")
+        except Exception as e:
+            st.error(f"Could not clone repository: {e}")
+    st.subheader("Here's what's happening:")
+    st.write("Cloning creates a local copy of the GitHub project on your computer.")
+    st.write("Pulling updates your local copy with the latest changes from GitHub.")

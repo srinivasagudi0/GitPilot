@@ -80,10 +80,9 @@ if feature == "Status & Stage Files":
                     repo = git.Repo(repo_dir)
                     status = repo.git.status()
                     st.code(status)
-                    if os.getenv("OPENAI_API_KEY"):
-                        with st.spinner("Summarizing changes..."):
-                            summary = summarize_status(status)
-                        st.info(f"Summary: {summary}")
+                    with st.spinner("Summarizing changes..."):
+                        summary = summarize_status(status)
+                    st.info(f"Summary: {summary}")
                 else:
                     st.warning("Looks like Git isn't set up here yet. Want to initialize it first?")
             else:

@@ -18,6 +18,8 @@ if feature == "Start Here":
 By the end of the course, users will be able to commit and manage files independently without confusion, fear, or self-doubt.""")
     st.write("Let's get started!")
     st.info("Choose a feature from the sidebar to begin your Git learning journey.")
+    st.warning("Don't worry about making mistakes. I would recommend makeing a test repo and just trying things out. You can always reset your repo if you mess up. *The best way to learn is by doing!*")
+    st.info("I also recommend going one feature at a time and really trying it out before moving on to the next one. You can always come back to review any feature as many times as you want.")
 
 if feature == "Vocabulary":
     st.header("Git Vocabulary")
@@ -326,3 +328,7 @@ if feature == "Graduation":
     st.checkbox("Clone repositories")
     st.write("\nYou're ready to use Git confidently!")
     st.write("Keep practicing to become a Git pro!")
+
+    if st.button("Celebrate with Confetti!"):
+        st.balloons()
+### done for a small prokject ## ask how to make this an expert class, but you did good, just need to add more advanced features ig. 

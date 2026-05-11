@@ -468,3 +468,22 @@ if feature == "Progress Tracker":
     
     st.info("Come back to this page after completing each feature to check it off!")
 
+if feature == "Quick Reference":
+    st.header("Git Quick Reference")
+    st.write("A handy guide for common Git commands and what they do.")
+    # looks reakky bad here i know.
+    with st.expander("Basic Commands"):
+        st.code("git init          # Start Git in a folder\ngit status        # See what changed\ngit add file      # Stage a file\ngit commit -m msg # Save changes\ngit log           # View history", language="bash")
+    
+    with st.expander("Branches"):
+        st.code("git branch                  # List branches\ngit branch new_branch      # Create branch\ngit checkout new_branch    # Switch branch\ngit merge branch_name      # Combine branches", language="bash")
+    
+    with st.expander("Remote & Push"):
+        st.code("git remote add origin URL   # Connect to GitHub\ngit push -u origin main    # Upload changes\ngit pull origin main       # Download changes\ngit clone URL              # Copy a project", language="bash")
+    
+    with st.expander("Undo & Fix"):
+        st.code("git restore file           # Undo file changes\ngit reset HEAD~1           # Undo last commit\ngit revert HEAD            # Create opposite commit", language="bash")
+    with st.expander("Tips"):
+        st.write("- Use `git status` often to see what's going on.")
+        st.write("- Write clear commit messages to remember your changes.")
+        st.warning("- Don't be afraid to experiment and make mistakes. That's how you learn!")

@@ -270,13 +270,25 @@ if feature == "Add Remote & Push":
 
             if st.button("Push to GitHub"):
                 try:
-                    if branch_to_push:
+                    if not branch_to_push:
+                        st.warning("Make one commit first before pushing.")
+                    else:
+                        remotes = [remote.name for remote in repo.remotes]
+                        if remote_url:
+                            if "origin" in remotes:
+                                repo.git.remote("set-url", "origin", remote_url)
+                            else:
+                                repo.git.remote("add", "origin", remote_url)
+                        elif "origin" not in remotes:
+                            st.warning("Paste your GitHub repo URL first.")
+                            st.stop()
+ 
                         if current_branch != branch_to_push:
                             repo.git.checkout(branch_to_push)
                         repo.git.push("-u", "origin", branch_to_push)
+
+
                         st.success(f"Pushed `{branch_to_push}` to GitHub.")
-                    else:
-                        st.warning("Make one commit first before pushing.")
                 except Exception as e:
                     st.error(f"Could not push: {e}")
         else:

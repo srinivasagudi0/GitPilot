@@ -5,6 +5,7 @@ import git
 from support import is_git_initialized as check_git
 from support import summarize_git_status as summarize_status
 from features.vocab import show_vocab
+from features.init_git import initialize_git    
 
 
 features = ["Start Here", "Vocabulary","Initialize Git", "Status & Stage Files", "Commit Files", "Log & Branch", "Add Remote & Push"]
@@ -38,17 +39,8 @@ if feature == "Initialize Git":
     repo_dir = st.text_input("Project directory", value=os.getcwd())
 
     if st.button("Initialize Git"):
-        try:
-            if os.path.isdir(repo_dir):
-                if check_git(repo_dir):
-                    st.warning("Git is already initialized in this folder.")
-                else:
-                    git.Repo.init(repo_dir)
-                    st.success("Git has been initialized successfully!")
-            else:
-                st.error("The specified path does not exist. Please enter a valid path.")
-        except Exception as e:
-            st.error(f"An error occurred while initializing Git: {e}")
+        initialize_git(repo_dir)
+    
     st.subheader("What this does:")
     st.write("Starts Git tracking in this folder.")
     st.write("Creates a hidden `.git` directory for version control (lets you track changes to your files, save different versions, and collaborate with others safely).")

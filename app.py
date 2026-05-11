@@ -437,3 +437,34 @@ if feature == "Practice Mode":
     st.subheader("Why practice mode?")
     st.write("Experiment without worrying about breaking your real projects.")
     st.write("Try different Git commands and see what happens.")
+
+if feature == "Progress Tracker":
+    st.header("Your Learning Progress Tracker")
+    st.write("Track what you've learned so far!")
+    
+    progress_items = {
+        "Initialize Git": False,
+        "Check Status & Stage Files": False,
+        "Commit Files": False,
+        "View Logs & Branches": False,
+        "Add Remote & Push": False,
+        "Undo & Rollback": False,
+        "Clone & Pull": False,
+    } #### HEREEE###
+    # I will add features, but for now, only features here are that from the sidebar. Once I add the testing features to sidebar, I willl add them abovee
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.subheader("Completed")
+        for item in progress_items:
+            st.checkbox(item, value=False)
+    
+    with col2:
+        completed = sum(1 for v in progress_items.values() if v)
+        total = len(progress_items)
+        st.metric("Lessons Completed", f"{completed}/{total}")
+        st.progress(completed / total if total > 0 else 0)
+    
+    st.info("Come back to this page after completing each feature to check it off!")
+

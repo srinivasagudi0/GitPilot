@@ -1,4 +1,5 @@
 # will later refactor the code into muliple modules and add more features but for now this is the basic structure of the app.
+from features.status_stage import show_git_status, show_what_changed
 import streamlit as st
 import os
 import git
@@ -59,37 +60,11 @@ if feature == "Status & Stage Files":
 
     if st.button("See What Changed"):
         try:
-            if os.path.isdir(repo_dir):
-                if check_git(repo_dir):
-                    repo = git.Repo(repo_dir)
-                    status = repo.git.status()
-                    st.code(status)
-                    if os.getenv("OPENAI_API_KEY"):
-                        with st.spinner("Summarizing changes..."):
-                            summary = summarize_status(status)
-                        st.info(f"Summary: {summary}")
-                else:
-                    st.warning("Looks like Git isn't set up here yet. Want to initialize it first?")
-            else:
-                st.error("That path doesn't seem to exist. Can you double-check it?")
+            show_git_status(repo_dir)
         except Exception as e:
             st.error(f"Oops, something went wrong: {e}")
 
-    if os.path.isdir(repo_dir) and check_git(repo_dir):
-        repo = git.Repo(repo_dir)
-        changed_files = repo.git.status("--short").splitlines()
-        file_names = [file[3:] for file in changed_files]
-
-        if file_names:
-            selected_files = st.multiselect("Which files do you want to save?", file_names)
-            if st.button("Save These Files"):
-                if selected_files:
-                    repo.git.add(*selected_files)
-                    st.success("All set! Your files are ready to be committed.")
-                else:
-                    st.warning("Pick at least one file first.")
-        else:
-            st.success("Everything's up to date. Nothing new to save!")
+    show_what_changed(repo_dir)
 
     st.subheader("Here's what's happening:")
     st.write("You get to see all the files you've modified in your project.")

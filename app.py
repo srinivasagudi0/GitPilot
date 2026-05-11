@@ -287,7 +287,7 @@ if feature == "Add Remote & Push":
 
 
 
-# now simplest things to do add a last section of teaching with git clone and git pull
+# ---test the below feature and add it to the sidebar if it works.
 
 if feature == "Clone & Pull":
     st.header("Clone & Pull")
@@ -312,3 +312,17 @@ if feature == "Clone & Pull":
     st.subheader("Here's what's happening:")
     st.write("Cloning creates a local copy of the GitHub project on your computer.")
     st.write("Pulling updates your local copy with the latest changes from GitHub.")
+
+# Just a fun check and it willwork as expected but test it out afternoon and then add it to the sidebar.
+if feature == "Graduation":
+    st.header("Congratulations!")
+    st.write("You've completed the GitPilot training program!")
+    st.subheader("What You've Learned:")
+    st.checkbox("Initialize Git in a project")
+    st.checkbox("Check status and stage files")
+    st.checkbox("Commit your changes")
+    st.checkbox("View logs and create branches")
+    st.checkbox("Add remote and push to GitHub")
+    st.checkbox("Clone repositories")
+    st.write("\nYou're ready to use Git confidently!")
+    st.write("Keep practicing to become a Git pro!")

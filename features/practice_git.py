@@ -42,4 +42,4 @@ def practice_git():
                 st.success("Practice repo reset to clean state.")
             except Exception as e:
                 st.error(f"Could not reset: {e}")
-        
+    

@@ -7,6 +7,7 @@ from support import is_git_initialized as check_git
 from support import summarize_git_status as summarize_status
 from features.vocab import show_vocab
 from features.init_git import initialize_git    
+from features.commit import show_staged_files, commit_changes
 
 
 features = ["Start Here", "Vocabulary","Initialize Git", "Status & Stage Files", "Commit Files", "Log & Branch", "Add Remote & Push"]
@@ -82,34 +83,11 @@ if feature == "Commit Files":
     repo_dir = st.text_input("Where's your project?", value=os.getcwd())
     commit_message = st.text_input("What's this change about?", value="My commit message")
 
-    if os.path.isdir(repo_dir) and check_git(repo_dir):
-        repo = git.Repo(repo_dir)
-        staged_files = repo.git.diff("--cached", "--name-only").splitlines()
-
-        if staged_files:
-            st.write("Files ready to commit:")
-            st.write(staged_files)
-        else:
-            st.warning("No files are staged yet. Go to Status & Stage Files first.")
+    show_staged_files(repo_dir)
 
     if st.button("Commit Changes"):
         try:
-            if os.path.isdir(repo_dir):
-                if check_git(repo_dir):
-                    repo = git.Repo(repo_dir)
-                    staged_files = repo.git.diff("--cached", "--name-only").splitlines()
-
-                    if not commit_message.strip():
-                        st.warning("Write a commit message first.")
-                    elif staged_files:
-                        repo.git.commit("-m", commit_message)
-                        st.success("Great job! Your changes have been committed.")
-                    else:
-                        st.warning("Stage at least one file before committing.")
-                else:
-                    st.warning("Git isn't set up here yet. Do you want to initialize it first?")
-            else:
-                st.error("That path doesn't seem to exist. Can you double-check it?")
+            commit_changes(repo_dir, commit_message)
         except Exception as e:
             st.error(f"Oops, something went wrong: {e}")
 

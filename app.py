@@ -101,10 +101,17 @@ if feature == "Commit Files":
     repo_dir = st.text_input("Where's your project?", value=os.getcwd())
     commit_message = st.text_input("What's this change about?", value="My commit message")
 
-    show_staged_files(repo_dir)
+    if os.path.isdir(repo_dir):
+        if check_git(repo_dir):
+            show_staged_files(repo_dir)
+        else:
+            st.warning("Git isn't set up here yet. Want to initialize it first?")
+    else:
+        st.error("That path doesn't seem to exist. Can you double-check it?")
 
     if st.button("Commit Changes"):
         try:
+            # dont need to check twice because i did it above and it is for the same directory.
             commit_changes(repo_dir, commit_message)
         except Exception as e:
             st.error(f"Oops, something went wrong: {e}")

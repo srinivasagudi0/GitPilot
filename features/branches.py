@@ -34,3 +34,5 @@ def show_current_branch(repo_dir):
                 st.warning("Git is not initialized in this folder.")
         else:
             st.error("That path doesn't seem to exist. Can you double-check it?")
+
+# done i guess, but shoudl test it out.

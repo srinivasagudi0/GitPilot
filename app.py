@@ -135,8 +135,15 @@ if feature == "Log & Branch":
 
     repo_dir = st.text_input("Where's your project?", value=os.getcwd())
 
-    current_branch(repo_dir)
-
+    if os.path.isdir(repo_dir):
+        if check_git(repo_dir):
+            current_branch(repo_dir)
+        else:
+            st.warning("Git isn't set up here yet. Want to initialize it first?")
+    else:
+        st.error("That path doesn't seem to exist. Can you double-check it?")
+    #current_branch(repo_dir)
+    
     st.subheader("Here's what's happening:")
     st.write("The log shows saved commits.")
     st.write("A branch is a separate place to work on your project.")

@@ -10,6 +10,7 @@ from features.init_git import initialize_git
 from features.commit import show_staged_files, commit_changes
 from features.branches import show_current_branch as current_branch
 from features.git_push import push_changes
+from features.clone_pull import clone_repo
 
 
 features = ["Start Here", "Vocabulary","Initialize Git", "Status & Stage Files", "Commit Files", "Log & Branch", "Add Remote & Push"]
@@ -191,11 +192,7 @@ if feature == "Clone & Pull":
     if st.button("Clone Repository"):
         try:
             if remote_url and save_path:
-                if os.path.exists(save_path) and os.listdir(save_path):
-                    st.warning("The save path is not empty. Please choose an empty folder or a new path.")
-                else:
-                    git.Repo.clone_from(remote_url, save_path)
-                    st.success("Repository cloned successfully!")
+                clone_repo(remote_url, save_path)
             else:
                 st.warning("Please enter both the GitHub repo URL and the save path.")
         except Exception as e:

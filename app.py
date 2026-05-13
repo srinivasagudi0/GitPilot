@@ -2,7 +2,6 @@
 from features.status_stage import show_git_status, show_what_changed
 import streamlit as st
 import os
-import git
 from support import is_git_initialized as check_git
 from support import summarize_git_status as summarize_status
 from features.vocab import show_vocab
@@ -15,11 +14,13 @@ from features.graduation import Graduate
 from features.rollback import rollback_commit
 from features.practice_git import practice_git
 from features.article import article
+from features.analytics import show_repo_analytics
 
 
 
 features = ["Start Here", "Vocabulary","Initialize Git", "Status & Stage Files", "Commit Files", "Log & Branch", "Add Remote & Push"]
 st.sidebar.markdown("# **:blue[GitPilot]**")
+st.sidebar.write("You can use the sidebar to navigate through the different learning sections of GitPilot.\n Each feature is designed to help you learn Git step by step or only what is required, with interactive tools and explanations.\n Just pick a feature to get started on your Git learning journey!")
 feature = st.sidebar.selectbox(
     "Choose a feature", [feature for feature in features]
 )
@@ -87,7 +88,7 @@ if feature == "Status & Stage Files":
             else:
                 st.error("That path doesn't seem to exist. Can you double-check it?")
         except Exception as e:
-            st.error(f"Oops, something went wrong: {e}")
+            st.error(f"Something went wrong: {e}")
 
     show_what_changed(repo_dir)
 
@@ -297,3 +298,27 @@ if feature == "GitHub Fun Facts":
     st.caption("Many people (inlcuding me) wonder why Github just gives unlimited free public repositories. How do they make money?")
     with st.expander("Read the Article"):
         article()
+
+        if feature == "Repo Analytics":
+            st.header("Repository Analytics")
+            st.write("Analyze your Git repository statistics and insights.")
+            
+            repo_dir = st.text_input("Where's your project?", value=os.getcwd())
+            
+            if st.button("Analyze Repository"):
+                try:
+                    if os.path.isdir(repo_dir):
+                        if check_git(repo_dir):
+                            show_repo_analytics(repo_dir)
+                        else:
+                            st.warning("Git isn't set up here yet.")
+                    else:
+                        st.error("That path doesn't seem to exist.")
+                except Exception as e:
+                    st.error(f"Error analyzing repository: {e}")
+            
+            st.subheader("Here's what you'll see:")
+            st.write("Total commits in your project")
+            st.write("Most active contributor")
+            st.write("File change statistics")
+            st.write("Commit frequency over time")

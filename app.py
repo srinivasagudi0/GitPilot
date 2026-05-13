@@ -299,26 +299,27 @@ if feature == "GitHub Fun Facts":
     with st.expander("Read the Article"):
         article()
 
-        if feature == "Repo Analytics":
-            st.header("Repository Analytics")
-            st.write("Analyze your Git repository statistics and insights.")
-            
-            repo_dir = st.text_input("Where's your project?", value=os.getcwd())
-            
-            if st.button("Analyze Repository"):
-                try:
-                    if os.path.isdir(repo_dir):
-                        if check_git(repo_dir):
-                            show_repo_analytics(repo_dir)
-                        else:
-                            st.warning("Git isn't set up here yet.")
-                    else:
-                        st.error("That path doesn't seem to exist.")
-                except Exception as e:
-                    st.error(f"Error analyzing repository: {e}")
-            
-            st.subheader("Here's what you'll see:")
-            st.write("Total commits in your project")
-            st.write("Most active contributor")
-            st.write("File change statistics")
-            st.write("Commit frequency over time")
+if feature == "Repo Analytics":
+    st.header("Repository Analytics")
+    st.write("Analyze your Git repository statistics and insights.")
+    
+    repo_dir = st.text_input("Where's your project?", value=os.getcwd())
+    
+    if st.button("Analyze Repository"):
+        try:
+            if os.path.isdir(repo_dir):
+                if check_git(repo_dir):
+                    show_repo_analytics(repo_dir)
+                else:
+                    st.warning("Git isn't set up here yet.")
+            else:
+                st.error("That path doesn't seem to exist.")
+        except Exception as e:
+            st.error(f"Error analyzing repository: {e}")
+    
+    st.subheader("Here's what you'll see:")
+    st.write("Total commits in your project")
+    st.write("Most active contributor")
+    st.write("File change statistics")
+    st.write("Commit frequency over time")
+# now i will work 

@@ -324,3 +324,7 @@ if feature == "Repo Analytics":
     st.write("Most active contributor")
     st.write("File change statistics")
     st.write("Commit frequency over time")
+
+if feature == "AI Coach Quiz":
+    from features.ai_coach import quiz_ui
+    quiz_ui()

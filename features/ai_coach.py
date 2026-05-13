@@ -1,12 +1,11 @@
 from openai import OpenAI
-import  os
+import os
 import json
+import streamlit as st
 
-client = OpenAI(
-    api_key=os.getenv("OPENAI_API_KEY")
-)
 
-def quiz_generator():
+
+def quiz_generator(client):
     prompt = """Generate a multiple choice question with 4 answer options and the correct answer.
     Return the response as a JSON object with the following structure:
     {
@@ -28,23 +27,20 @@ def quiz_generator():
      
     return json.loads(response.choices[0].message.content)
 
-def practice_quiz():
-    quiz = quiz_generator()
-    print("\n" + "="*50)
-    print("GIT QUIZ")
-    print("="*50)
-    print(f"\nQuestion: {quiz['question']}\n")
-    for choice in quiz["choices"]:
-        print(choice)
-    
-    user_answer = input("\nYour answer (A/B/C/D): ").strip().upper()
-    correct_answer = quiz["answer"]
-    
-    if user_answer == correct_answer:
-        print("\n✓ Correct!")
-        return True
-    else:
-        print(f"\n✗ Incorrect. The correct answer is: {quiz['answer']}")
-        return False
-    
-    # first test it out in cli and then integrate it into the main menu
+def quiz_ui():
+    st.title("Git Quiz")
+    if st.button("Generate Quiz"):
+        if not os.getenv("OPENAI_API_KEY"):
+            st.error("Set your OpenAI API key in the environment variable OPENAI_API_KEY to use this feature.")
+            return
+        client = OpenAI(
+            api_key=os.getenv("OPENAI_API_KEY")
+        )
+        quiz = quiz_generator(client)
+        for i in range(4):
+            choice = quiz["choices"][i]
+            if st.button(choice):
+                if choice.startswith(quiz["answer"]):
+                    st.success("Correct!")
+                else:
+                    st.error(f"Incorrect. The correct answer is: {quiz['answer']}")

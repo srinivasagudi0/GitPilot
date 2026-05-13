@@ -1,9 +1,9 @@
-# now I willl work on a major major feature: --- multi user cloud sync
 from features.status_stage import show_git_status, show_what_changed
 import streamlit as st
 import os
 from support import is_git_initialized as check_git
 from support import summarize_git_status as summarize_status
+from features.auth import require_login, show_logout_button
 from features.vocab import show_vocab
 from features.init_git import initialize_git    
 from features.commit import show_staged_files, commit_changes
@@ -16,10 +16,12 @@ from features.practice_git import practice_git
 from features.article import article
 from features.analytics import show_repo_analytics
 
+require_login()
 
 
 features = ["Start Here", "Vocabulary","Initialize Git", "Status & Stage Files", "Commit Files", "Log & Branch", "Add Remote & Push"]
 st.sidebar.markdown("# **:blue[GitPilot]**")
+show_logout_button()
 st.sidebar.write("You can use the sidebar to navigate through the different learning sections of GitPilot.\n Each feature is designed to help you learn Git step by step or only what is required, with interactive tools and explanations.\n Just pick a feature to get started on your Git learning journey!")
 feature = st.sidebar.selectbox(
     "Choose a feature", [feature for feature in features]

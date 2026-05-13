@@ -17,13 +17,34 @@ def quiz_generator():
             "C) Third option",
             "D) Fourth option"
         ],
-        "answer": "A) Correct answer text"
+        "answer": "A"
     }
-    Only return the JSON object, no additional text."""
+    Only return the JSON object, no additional text. The questions should be based on git commands and concepts."""
     
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
-        messages=[{"role": "user", "content": prompt + "The questions should be based on git commands and concepts."}]
+        messages=[{"role": "user", "content": prompt}]
     )
-    
+     
     return json.loads(response.choices[0].message.content)
+
+def practice_quiz():
+    quiz = quiz_generator()
+    print("\n" + "="*50)
+    print("GIT QUIZ")
+    print("="*50)
+    print(f"\nQuestion: {quiz['question']}\n")
+    for choice in quiz["choices"]:
+        print(choice)
+    
+    user_answer = input("\nYour answer (A/B/C/D): ").strip().upper()
+    correct_answer = quiz["answer"]
+    
+    if user_answer == correct_answer:
+        print("\n✓ Correct!")
+        return True
+    else:
+        print(f"\n✗ Incorrect. The correct answer is: {quiz['answer']}")
+        return False
+    
+    # first test it out in cli and then integrate it into the main menu

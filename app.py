@@ -1,4 +1,4 @@
-# will later refactor the code into muliple modules and add more features but for now this is the basic structure of the app.
+# now I willl work on a major major feature: --- multi user cloud sync
 from features.status_stage import show_git_status, show_what_changed
 import streamlit as st
 import os
@@ -322,4 +322,3 @@ if feature == "Repo Analytics":
     st.write("Most active contributor")
     st.write("File change statistics")
     st.write("Commit frequency over time")
-# now i will work 
